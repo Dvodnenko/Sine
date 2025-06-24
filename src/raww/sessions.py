@@ -6,6 +6,28 @@ from .data import rewrite_data, get_tags, get_active_session, get_sessions, read
 from .views import format_work_time_info
 
 
+def sort_sessions_by_date_range(sessions: list, dr: str):
+
+    if '..' in dr:
+        dates = dr.split('..')
+        start_date = datetime.date.fromisoformat(dates[0])
+        end_date = datetime.date.today() if dates[1] == '' else datetime.date.fromisoformat(dates[1])
+    elif dr == 'today':
+        start_date = datetime.date.today()
+        end_date = datetime.date.today()
+    elif dr == 'all':
+        return sessions
+   
+    new_sessions: list[dict] = []
+
+    for s in sessions:
+        s_start = datetime.date.fromisoformat(s.get('start').get('date'))
+        if (s_start >= start_date) and (s_start <= end_date):
+            new_sessions.append(s)
+
+    return new_sessions
+
+
 @click.command('begin')
 @click.argument('tags', nargs=-1)
 def begin_session(tags: tuple):
