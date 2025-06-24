@@ -43,7 +43,7 @@ def create_matrix(sessions: list):
         work_time_info = format_work_time_info(hours, minutes, seconds)
 
         data.append([
-                ''.join(f'{tag}, '[:-2] for tag in s.get('tags')),
+                ''.join(f'{tag}, ' for tag in s.get('tags'))[:-2],
                 s.get('start').get('date') + ' ' + s.get('start').get('time')[:-7],
                 s.get('end').get('date') + ' ' + s.get('end').get('time')[:-7],
                 s.get('breaks'),
