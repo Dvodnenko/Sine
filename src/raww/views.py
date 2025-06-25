@@ -17,3 +17,12 @@ def format_work_time_info(
         work_time_info += f'{seconds}s'
 
     return work_time_info
+
+
+def ask(q: str, convert_to_bool: bool = True):
+    answer = input(q)
+    
+    if convert_to_bool:
+        return answer.lower() == 'y'
+    else:
+        return answer
