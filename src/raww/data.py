@@ -81,8 +81,22 @@ def get_sessions() -> list[dict]:
 
     return sessions if sessions else []
 
-def get_active_session() -> dict | None:
+def get_active_session() -> dict:
     data = read_data()
     active_session = get_field(data, 'active_session')
 
-    return active_session
+    return active_session if active_session else {}
+
+
+def update_datafile(tags: list = get_tags(), 
+                    active_session: dict = get_active_session(), 
+                    sessions: list[dict] = get_sessions()
+):
+    newdatadict = {
+        'tags': tags,
+        'active_session': active_session,
+        'sessions': sessions
+    }
+    rewrite_data(newdatadict)
+
+    return None

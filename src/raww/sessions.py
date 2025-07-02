@@ -3,7 +3,7 @@ import time, datetime
 import click
 from tabulate import tabulate
 
-from .data import rewrite_data, get_tags, get_active_session, get_sessions, read_data
+from .data import get_tags, get_active_session, get_sessions, update_datafile
 from .views import format_work_time_info
 
 
@@ -105,7 +105,6 @@ def begin_session(tags: tuple):
         exit(1)
     
     mytags = get_tags()
-    sessions = get_sessions()
 
     for tag in tags:
         if tag not in mytags:
@@ -113,18 +112,11 @@ def begin_session(tags: tuple):
             exit(1)
 
     start = datetime.datetime.now()
-
-    new_data = {
-        'tags': [*mytags],
-        'active_session': {
+    update_datafile(active_session={
             'tags': [*tags],
             'start': f'{start}',
             'breaks': 0
-        },
-        'sessions': [*sessions]
-    }
-
-    rewrite_data(new_data)
+        })
 
     click.echo('🦇 session started')
     click.echo()
@@ -145,7 +137,6 @@ def finish_session():
         click.echo('🦇 there is no active session yet')
         exit(1)
 
-    mytags = get_tags()
     mysessions = get_sessions()
 
     # start & end info
@@ -172,7 +163,7 @@ def finish_session():
         'seconds': seconds
     }
 
-    new_session = {
+    update_datafile(sessions=[*mysessions, {
         'tags': [*tags],
         'start': {
             'date': f'{start_date}',
@@ -184,15 +175,7 @@ def finish_session():
         },
         'breaks': breaks,
         'total time': total_time
-    }
-
-    new_data = {
-        'tags': [*mytags],
-        'active_session': {},
-        'sessions': [*mysessions, new_session]
-    }
-
-    rewrite_data(new_data=new_data)
+    }])
 
     click.echo('the session has ended 🦇')
     click.echo()
@@ -209,23 +192,15 @@ def finish_session():
 
 @click.command('pause')
 def pause_session():
-
     active_session = get_active_session()
-
     if not active_session:
         click.echo('🦇 there is no active session yet')
         exit(1)
-
-    tags: list = active_session.get('tags')
     breaks: int = active_session.get('breaks')
-    data = read_data()
-
     click.echo('🦇 the session is paused')
-    
     while True:
         time.sleep(1)
         breaks += 1
 
         active_session['breaks'] = breaks
-        data['active_session'] = active_session
-        rewrite_data(data)
+        update_datafile(active_session=active_session)

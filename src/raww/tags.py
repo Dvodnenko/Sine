@@ -1,6 +1,6 @@
 import click
 
-from .data import rewrite_data, get_tags, get_sessions, get_active_session
+from .data import get_tags, update_datafile
 
 
 @click.command('tags')
@@ -16,16 +16,7 @@ def tag(
             click.echo(f'🦇 tag {new} already exists')
             exit(1)
         else:
-            mysessions = get_sessions()
-            active_session = get_active_session()
-
-            new_data = {
-                'tags': [*mytags, new],
-                'active_session': active_session,
-                'sessions': [*mysessions]
-            }
-
-            rewrite_data(new_data)
+            update_datafile(tags=[*mytags, new])
             click.echo(f'🦇 new tag - {new}')
             exit(0)
     else:
