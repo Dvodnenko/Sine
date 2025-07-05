@@ -3,6 +3,7 @@ import json
 
 import click
 
+from .config import load_config, DEFAULT_RAWW_DF
 from .tags import tag
 from .sessions import begin_session, finish_session, pause_session, check_sessions
 
@@ -11,8 +12,11 @@ from .sessions import begin_session, finish_session, pause_session, check_sessio
 @click.version_option(package_name='raww')
 @click.pass_context
 def raw(ctx: click.Context):
-    raww_datafile = Path.home() / '.rawdata.json'
+    config = load_config()
+    raww_datafile = Path(config.get('raww_datafile', str(DEFAULT_RAWW_DF)))
 
+    if not raww_datafile.parent.exists():
+        raww_datafile.parent.mkdir(parents=True, exist_ok=True)
     if not raww_datafile.exists():
         raww_datafile.touch()
         with open(raww_datafile, 'w') as file:
