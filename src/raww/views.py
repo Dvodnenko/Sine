@@ -1,3 +1,7 @@
+from pathlib import Path
+import pickle
+
+
 def format_work_time_info(
         hours: int = 0,
         minutes: int = 0,
@@ -18,7 +22,6 @@ def format_work_time_info(
 
     return work_time_info
 
-
 def ask(q: str, convert_to_bool: bool = True):
     answer = input(q)
     
@@ -26,3 +29,12 @@ def ask(q: str, convert_to_bool: bool = True):
         return answer.lower() == 'y'
     else:
         return answer
+
+def create_file_if_not_exists(path: Path, default_content):
+    if path.exists():
+        return
+    
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.touch()
+    with open(path, 'wb') as file:
+        pickle.dump(default_content, file)
