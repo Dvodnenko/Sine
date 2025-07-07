@@ -3,7 +3,7 @@ from datetime import date, time, datetime
 from ..views import format_work_time_info
 
 
-class TotalWorkTime:
+class TimeDelta:
     def __init__(self, hours: int, minutes: int, seconds: int):
         self.hours = hours
         self.minutes = minutes

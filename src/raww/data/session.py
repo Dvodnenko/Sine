@@ -1,4 +1,4 @@
-from .time import TotalWorkTime, TimePoint
+from .time import TimeDelta, TimePoint
 
 
 class Session:
@@ -24,4 +24,4 @@ class Session:
         diff -= minutes * 60
         seconds = diff
 
-        return TotalWorkTime(hours=hours, minutes=minutes, seconds=seconds)
+        return TimeDelta(hours=hours, minutes=minutes, seconds=seconds)
