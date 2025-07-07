@@ -5,12 +5,11 @@ from pathlib import Path
 CONFIG_DIR = Path.home() / '.config' / 'raww'
 CONFIG_FILE = CONFIG_DIR / 'config.json'
 DEFAULT_RAWW_DIR = Path.home() / '.raww'
-DEFAULT_RAWW_DF = DEFAULT_RAWW_DIR / 'data.json' # DF stands for data file
 
 
 def load_config():
     if not CONFIG_FILE.exists():
-        return {'raww_datafile': str(DEFAULT_RAWW_DF)}
+        return {'raww_directory': str(DEFAULT_RAWW_DIR)}
     with open(CONFIG_FILE, 'r') as file:
         return json.load(file)
     

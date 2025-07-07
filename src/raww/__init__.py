@@ -3,7 +3,7 @@ import json
 
 import click
 
-from .config import load_config, save_config, CONFIG_FILE, DEFAULT_RAWW_DF
+from .config import load_config, save_config, CONFIG_FILE, DEFAULT_RAWW_DIR
 from .tags import tag
 from .sessions import begin_session, finish_session, pause_session, check_sessions
 
@@ -13,21 +13,12 @@ from .sessions import begin_session, finish_session, pause_session, check_sessio
 @click.pass_context
 def raw(ctx: click.Context):
     config = load_config()
-    raww_datafile = Path(config.get('raww_datafile', str(DEFAULT_RAWW_DF)))
+    raww_directory = Path(config.get('raww_directory', str(DEFAULT_RAWW_DIR)))
 
-    if not raww_datafile.parent.exists():
-        raww_datafile.parent.mkdir(parents=True, exist_ok=True)
-    if not raww_datafile.exists():
-        raww_datafile.touch()
-        with open(raww_datafile, 'w') as file:
-            # filling datafile with basic stuff
-            json.dump({
-                'tags': [],
-                'active_session': {},
-                'sessions': [],
-            }, file, indent=4)
+    if not raww_directory.exists():
+        raww_directory.mkdir(parents=True, exist_ok=True)
 
-    ctx.obj = {'raww_datafile': raww_datafile, 'config': config}
+    ctx.obj = {'raww_directory': raww_directory, 'config': config}
 
 @raw.group()
 def config():
@@ -46,16 +37,16 @@ def show():
         exit(1)
     
     config = load_config()
-    click.echo(f'raww data file: {config.get('raww_datafile', DEFAULT_RAWW_DF)}')
+    click.echo(f'raww data directory: {config.get('raww_directory', DEFAULT_RAWW_DIR)}')
 
 @config.command()
 @click.option('-n', '--new-directory', type=click.Path(exists=False), help='')
 def update(new_directory: str):
     config = load_config()
-    config['raww_datafile'] = new_directory + '/data.json'
+    config['raww_directory'] = new_directory
 
     save_config(config)
-    click.echo(f'raww datafile set to "{new_directory + '/data.json'}"')
+    click.echo(f'raww data directory set to "{new_directory}"')
 
 
 ## commands ##
