@@ -135,14 +135,20 @@ def finish_session(ctx: click.Context):
         click.echo('🦇 there is no active session yet')
         exit(1)
 
-    session = data.finish_session()
+    summary = input('session summary: ')
+    session = data.finish_session(summary=summary)
 
     click.echo('the session has ended 🦇')
     click.echo()
     if session.msg == '':
         click.echo('there was no message in the session')
     else:
-        click.echo(session.msg)
+        click.echo(f'message: {session.msg}')
+        click.echo()
+    if session.summary == '':
+        click.echo('there is no summary in the session')
+    else:
+        click.echo(f'summary: {session.summary}')
         click.echo()
 
     tags = session.tags

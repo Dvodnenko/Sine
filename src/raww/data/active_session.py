@@ -24,7 +24,7 @@ class ActiveSession:
             pickle.dump(active_session, file)
         return active_session
     @staticmethod
-    def _finish(path: Path): # !underhood method!
+    def _finish(summary: str, path: Path): # !underhood method!
         with open(path, 'rb') as file:
             active_session: ActiveSession = pickle.load(file)
         with open(path, 'wb') as file:
@@ -32,6 +32,7 @@ class ActiveSession:
         return Session(
             active_session.tags, 
             active_session.msg,
+            summary,
             active_session.start, 
             TimePoint.now(),
             active_session.breaks

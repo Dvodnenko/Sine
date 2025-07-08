@@ -20,8 +20,8 @@ class Data:
         self.__as_path = self.dir / self.__as_df_title
     def begin_session(self, tags: list[str], msg: str) -> ActiveSession:
         return ActiveSession._begin(tags, msg, path=self.__as_path)
-    def finish_session(self) -> Session:
-        active_session = ActiveSession._finish(self.__as_path)
+    def finish_session(self, summary: str) -> Session:
+        active_session = ActiveSession._finish(summary=summary, path=self.__as_path)
         self.sessions = [*self.sessions, active_session]
         return active_session
 

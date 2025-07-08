@@ -6,12 +6,14 @@ class Session:
             self, 
             tags: list[str], 
             msg: str,
+            summary: str,
             start: TimePoint, 
             end: TimePoint, 
             breaks: int = 0
     ):
         self.tags = tags
         self.msg = msg
+        self.summary = summary
         self.start = start
         self.end = end
         self.breaks = breaks
