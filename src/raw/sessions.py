@@ -48,8 +48,8 @@ def check_sessions(ctx: click.Context, dr: str, lxd: int):
         else:
             dr = f'{datetime.date.today() - datetime.timedelta(days=(lxd-1))}..{datetime.date.today()}'
 
-    raww_directory = ctx.obj['raww_directory']
-    data = Data(raww_directory)
+    raw_directory = ctx.obj['raw_directory']
+    data = Data(raw_directory)
     all_sessions = data.sessions
 
     if all_sessions == []:
@@ -101,8 +101,8 @@ def begin_session(ctx: click.Context, tags: str, msg: str):
     else:
         tags = tags.split(',')
 
-    raww_directory = ctx.obj['raww_directory']
-    data = Data(raww_directory)
+    raw_directory = ctx.obj['raw_directory']
+    data = Data(raw_directory)
 
     if data.active_session:
         click.echo('🦇 there is already an active session')
@@ -135,8 +135,8 @@ def begin_session(ctx: click.Context, tags: str, msg: str):
 @click.pass_context
 def finish_session(ctx: click.Context):
 
-    raww_directory = ctx.obj['raww_directory']
-    data = Data(raww_directory)
+    raw_directory = ctx.obj['raw_directory']
+    data = Data(raw_directory)
     active_session = data.active_session
 
     if not active_session:
@@ -176,8 +176,8 @@ def finish_session(ctx: click.Context):
 @click.pass_context
 def pause_session(ctx: click.Context):
 
-    raww_directory = ctx.obj['raww_directory']
-    data = Data(raww_directory)
+    raw_directory = ctx.obj['raw_directory']
+    data = Data(raw_directory)
     active_session = data.active_session
 
     if not active_session:

@@ -16,8 +16,8 @@ def tag(
     else:
         new = new.split(',')
 
-    raww_directory = ctx.obj['raww_directory']
-    data = Data(raww_directory)
+    raw_directory = ctx.obj['raw_directory']
+    data = Data(raw_directory)
     mytags = data.tags
 
     if new:

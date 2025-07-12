@@ -2,14 +2,14 @@ import json
 from pathlib import Path
 
 
-CONFIG_DIR = Path.home() / '.config' / 'raww'
+CONFIG_DIR = Path.home() / '.config' / 'raw'
 CONFIG_FILE = CONFIG_DIR / 'config.json'
-DEFAULT_RAWW_DIR = Path.home() / '.raww'
+DEFAULT_RAW_DIR = Path.home() / '.raw'
 
 
 def load_config():
     if not CONFIG_FILE.exists():
-        return {'raww_directory': str(DEFAULT_RAWW_DIR)}
+        return {'raw_directory': str(DEFAULT_RAW_DIR)}
     with open(CONFIG_FILE, 'r') as file:
         return json.load(file)
     
