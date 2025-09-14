@@ -12,3 +12,6 @@ class Entity:
     @property
     def short_ID(self): 
         return self.ID[:10]
+    
+    def __eq__(self, other):
+        return isinstance(other, Entity) and self.ID == other.ID
