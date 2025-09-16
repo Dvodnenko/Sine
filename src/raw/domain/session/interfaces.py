@@ -5,6 +5,8 @@ from ..session.entity import Session
 
 
 class SessionRepository(ABC):
+
+    ext: str = None
     
     @abstractmethod
     def save(self, session: Session): ...

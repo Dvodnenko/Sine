@@ -6,7 +6,7 @@ from pathlib import Path
 class Entity:
 
     ID: int
-    group: Path # path to the parent folder
+    path: Path # path to the parent folder
     title: str
     
     @property
