@@ -9,11 +9,12 @@ from .group.entity import Group
 from .group.interfaces import GroupRepository
 
 from .config.entity import Config
+from .base.enums import Color
 
 
 __all__ = [
     'Session', 'SessionRepository', 'SessionIsActiveError',
     'Tag', 'TagRepository',
-    'Config',
+    'Config', 'Color',
     'Group', 'GroupRepository'
 ]

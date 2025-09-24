@@ -8,10 +8,13 @@ from ..session.exceptions import SessionIsActiveError
 @dataclass(kw_only=True, eq=False)
 class Session(Entity):
     start: datetime
-    message: str | None = field(default=None)
-    summary: str | None = field(default=None)
-    end: datetime | None = field(default=None)
-    _breaks: list[timedelta] = field(default_factory=lambda : [])
+    message: str | None = field(default=None, kw_only=True)
+    summary: str | None = field(default=None, kw_only=True)
+    end: datetime | None = field(default=None, kw_only=True)
+    _breaks: list[timedelta] = field(
+        default_factory=lambda : [],
+        kw_only=True
+    )
 
     @property
     def is_active(self) -> bool:
