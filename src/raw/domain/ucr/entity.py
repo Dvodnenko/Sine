@@ -6,8 +6,9 @@ T = TypeVar("T")
 
 @dataclass
 class UseCaseResponse(Generic[T]):
-    success: bool
-    data: Optional[T] = None
     message: Optional[str] = None
-    error: Optional[Exception] = None
     status_code: int = 0
+
+    @property
+    def success(self) -> bool:
+        return self.status_code == 0

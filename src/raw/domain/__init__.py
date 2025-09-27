@@ -4,7 +4,6 @@ from .session.exceptions import SessionIsActiveError
 from .tag.entity import Tag
 
 from .group.entity import Group
-from .group.interfaces import GroupRepository
 
 from .base.interfaces import FileRepository
 from .base.enums import Color
