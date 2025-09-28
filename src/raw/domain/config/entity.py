@@ -4,7 +4,7 @@ from pathlib import Path
 
 @dataclass(kw_only=True)
 class CoreSettings:
-    raw_path: Path
+    rootgroup: Path
 
 @dataclass(kw_only=True)
 class Config:

@@ -5,7 +5,7 @@ class SystemService:
     def __init__(self, repo: EntityRepository, config: Config):
         self.repo = repo
         self.config = config
-        self.system_path = self.config.core.raw_path / ".system"
+        self.system_path = self.config.core.rootgroup / ".system"
 
     def get_active_session(self) -> Session | None:
         _system_as_path = self.system_path / f"active_session.{self.repo.ext}"
