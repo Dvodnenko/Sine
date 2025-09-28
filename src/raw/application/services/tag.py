@@ -5,10 +5,10 @@ class TagService:
     def __init__(self, repo: EntityRepository, config: Config):
         self.repo = repo
         self.config = config
-        self.prefix = "TAG-"
+        self.endind = "-TAG"
     
     def create(self, tag: Tag) -> UseCaseResponse[Tag]:
-        _path = self.config.core.raw_path / tag.subpath / f"{self.prefix}{tag.title}.{self.repo.ext}"
+        _path = self.config.core.raw_path / tag.subpath / f"{tag.title}{self.endind}.{self.repo.ext}"
         if _path.exists():
             return UseCaseResponse(
                 status_code=3,
@@ -21,25 +21,26 @@ class TagService:
         )
     
     def update(self, subpath: str, new: Tag) -> UseCaseResponse[Tag]:
-        current_path = self.config.core.raw_path / subpath / f"{self.prefix}{new.title}.{self.repo.ext}"
+        current_path = self.config.core.raw_path / f"{subpath}{self.endind}.{self.repo.ext}"
         if not current_path.exists() or not current_path.is_file():
             return UseCaseResponse(
                 message=f"Tag not found: {subpath}", status_code=4
             )
-        new_path = self.config.core.raw_path / new.subpath / f"{self.prefix}{new.title}.{self.repo.ext}"
+        new_path = self.config.core.raw_path / new.subpath / f"{new.title}{self.endind}.{self.repo.ext}"
         if new_path.exists():
             return UseCaseResponse(
                 status_code=3,
                 message=f"Tag already exists: {new.subpath}/{new.title}", 
             )
-        self.repo.mv(current_path, new_path)
+        self.repo.mv(current_path, new_path) # if the title or subpath was changed - 
+                                             # move this file to the new location
         self.repo.dump(new)
         return UseCaseResponse(
-            message=f"Tag updated: {subpath}"
+            message=f"Tag updated: {subpath}", data=new
         )
     
     def delete(self, subpath: str) -> UseCaseResponse[Tag]:
-        _path = self.config.core.raw_path / f"{self.prefix}{subpath}.{self.repo.ext}"
+        _path = self.config.core.raw_path / f"{subpath}{self.endind}.{self.repo.ext}"
         if not _path.exists() or not _path.is_file():
             return UseCaseResponse(
                 message=f"Tag not found: {subpath}", status_code=4
