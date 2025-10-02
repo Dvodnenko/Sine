@@ -2,7 +2,7 @@ import click
 
 from .config import load_config
 
-from .commands.groups import groups_create, groups_delete, groups_all
+from .commands.groups import groups_create, groups_delete, groups_all, groups_update
 
 
 @click.group()
@@ -20,5 +20,6 @@ def raw(ctx: click.Context):
 def groups(): ...
 
 groups.add_command(groups_create, "create")
+groups.add_command(groups_update, "update")
 groups.add_command(groups_delete, "delete")
 groups.add_command(groups_all, "all")

@@ -1,4 +1,4 @@
-from .adapters.files import PickleFileRepository, PickleGroupRepository
+from .adapters.files import PickleFileRepository, PickleDirectoryRepository
 
 
-__all__ = ('PickleFileRepository', 'PickleGroupRepository')
+__all__ = ('PickleFileRepository', 'PickleDirectoryRepository')

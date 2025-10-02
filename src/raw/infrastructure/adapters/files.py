@@ -1,8 +1,7 @@
 from pathlib import Path
 import pickle
-import subprocess
 
-from ...domain import EntityRepository, Entity
+from ...domain import EntityRepository, Entity, Group
 
 
 class PickleFileRepository(EntityRepository):
@@ -14,9 +13,8 @@ class PickleFileRepository(EntityRepository):
 
     ext: str | None = "pickle"
 
-    def dump(self, rootgroup: Path, entity: Entity):
-        _path = rootgroup / f"{entity.subpath}.{self.ext}"
-        with open(_path, "wb") as file:
+    def dump(self, path: Path, entity: Entity):
+        with open(f"{path}.{self.ext}", "wb") as file:
             pickle.dump(entity, file)
         return None
 
@@ -25,30 +23,33 @@ class PickleFileRepository(EntityRepository):
             data = pickle.load(file)
         return data
     
-    def mv(self, current: Path, new: Path):
-        subprocess.run(['mv', '-i', current, new])
+    # current & new - NOT subpaths, but absolute paths. starting from config rootgroup
+    def mv(self, current: Path, new: Path, *, rootgroup):
+        current.rename(new)
         return None
 
 
-class PickleGroupRepository(EntityRepository):
+class PickleDirectoryRepository(EntityRepository):
     """
-    Groups repository `.pickle` implementation
+    Directories repository `.pickle` implementation
     """
 
     ext: str | None = "pickle"
+    __file_repo = PickleFileRepository()
 
-    def dump(self, rootgroup: Path, entity: Entity):
-        group_path = rootgroup / f"{entity.subpath}"
-        self_path = group_path / f"self.{self.ext}"
-        with open(self_path, "wb") as file:
-            pickle.dump(entity, file)
+    def dump(self, path: Path, entity: Group):
+        self.__file_repo.dump(path, entity)
         return None
 
-    def load(self, path: Path) -> Entity:
-        with open(path / f"self.{self.ext}", "rb") as file:
-            data = pickle.load(file)
+    def load(self, path: Path) -> Entity: # path example: IT/Work
+        data = self.__file_repo.load(path / f".self.{self.ext}")
         return data
-
-    def mv(self, current: Path, new: Path):
-        subprocess.run(['mv', '-i', current, new])
+    
+    # current & new - NOT subpaths, but absolute paths, starting from config rootgroup
+    def mv(self, current: Path, new: Path, *, rootgroup: Path):
+        current.rename(new)
+        self_path = new / f".self.{self.ext}"
+        data = self.__file_repo.load(self_path)
+        data.subpath = new.relative_to(rootgroup)
+        self.__file_repo.dump(new / ".self", data)
         return None
