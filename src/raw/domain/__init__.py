@@ -7,7 +7,7 @@ from .group.entity import Group
 
 from .base.interfaces import EntityRepository
 from .base.entity import Entity
-from .base.enums import Color, EntityType
+from .base.enums import Color
 from .config.entity import Config, CoreSettings
 from .ucr.entity import UseCaseResponse
 
@@ -15,6 +15,6 @@ from .ucr.entity import UseCaseResponse
 __all__ = [
     'Session', 'SessionRepository', 'SessionIsActiveError',
     'Tag', 'TagRepository', 'Entity', 'CoreSettings',
-    'Config', 'Color', 'EntityRepository', 'EntityType',
+    'Config', 'Color', 'EntityRepository',
     'Group', 'GroupRepository', 'UseCaseResponse'
 ]
