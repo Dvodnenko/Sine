@@ -6,4 +6,3 @@ from ..base.entity import Entity
 @dataclass(kw_only=True, eq=False)
 class Group(Entity):
     refs: list[Entity]
-    childern: list[Entity]
