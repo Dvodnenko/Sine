@@ -2,7 +2,7 @@ import click
 
 from .config import load_config
 
-from .commands.groups import groups_create, groups_delete, groups_all, groups_update, groups_print
+from .commands.groups import groups_create, groups_delete, groups_all, groups_update, groups_print, groups_filter
 
 
 @click.group()
@@ -24,3 +24,4 @@ groups.add_command(groups_update, "update")
 groups.add_command(groups_delete, "delete")
 groups.add_command(groups_all, "all")
 groups.add_command(groups_print, "print")
+groups.add_command(groups_filter, "filter")

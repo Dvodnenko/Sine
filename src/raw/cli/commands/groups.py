@@ -9,6 +9,12 @@ from ...infrastructure import PickleDirectoryRepository
 from ..config import load_config
 
 
+def complete_groups(ctx, param, incomplete):
+    config = load_config()
+    service = GroupService(repo=PickleDirectoryRepository, config=config)
+    return [group for group in service.yield_all() if group.startswith(incomplete)]
+
+
 @click.command("all")
 @click.option("-f", is_flag=True)
 @click.pass_context
@@ -24,7 +30,7 @@ def groups_all(ctx: click.Context, f):
 
 @click.command("print")
 @click.option("--fmt")
-@click.argument("obj")
+@click.argument("obj", shell_complete=complete_groups)
 @click.option("-c", "-color", is_flag=True)
 @click.pass_context
 def groups_print(ctx: click.Context, fmt, obj, c):
@@ -38,6 +44,19 @@ def groups_print(ctx: click.Context, fmt, obj, c):
         ))
     else:
         click.echo(fmt.format(**entity.__dict__))
+
+
+@click.command("filter")
+@click.argument("obj", shell_complete=complete_groups)
+@click.option("-c", "conditions", multiple=True, nargs=3)
+@click.pass_context
+def groups_filter(ctx: click.Context, obj: str, conditions: tuple[tuple[str]]):
+    service = GroupService(repo=PickleDirectoryRepository(), config=ctx.obj)
+    for c in conditions:
+        answer = service.meets_condition(obj, c)
+        if answer.message is True:
+            click.echo(obj)
+        exit(answer.status_code)
 
 
 @click.command("create")
@@ -54,12 +73,6 @@ def groups_create(ctx: click.Context, path: str, icon: str, color: str):
     ucr = service.create(group=group)
     click.echo(f"raw: {ucr.message}")
     exit(ucr.status_code)
-
-
-def complete_groups(ctx, param, incomplete):
-    config = load_config()
-    service = GroupService(repo=PickleDirectoryRepository, config=config)
-    return [group for group in service.yield_all() if group.startswith(incomplete)]
 
 
 @click.command("update")
