@@ -12,11 +12,12 @@ class GroupService:
         self.repository = repository
         self.config = config
 
-    def create(self, group: Group) -> None:
+    def create(self, group: Group) -> UseCaseResponse:
         if self.repository.get(group.title):
             return UseCaseResponse(f"Group already exists: {group.title}", status_code=5)
-        if not self.repository.get(group.title.parent):
-            return UseCaseResponse(f"Group not found: {group.title.parent}", status_code=4)
+        if not group.parentstr == "":
+            if not self.repository.get(group.parent):
+                return UseCaseResponse(f"Group not found: {group.parent}", status_code=4)
         self.repository.create(group)
         return UseCaseResponse(f"Group created: {group.title}")
         

@@ -1,38 +1,37 @@
-from sqlalchemy import (
-    Table, Column, Integer, String, ForeignKey
-)
+from sqlalchemy import Table, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-
 
 from ....domain import Entity
 from ..orm_registry import mapping_registry
 
 
-entities = Table(
+entities_table = Table(
     "entities", mapping_registry.metadata,
-    Column("title", Integer, primary_key=True),
-    Column("type", String),
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("type", String(50)),
+    Column("parent_id", Integer, ForeignKey("entities.id"), nullable=True),
 )
 
-links = Table(
-    "links", mapping_registry.metadata,
-    Column("title", Integer, primary_key=True),
-    Column("source_title", ForeignKey("entities.title")),
-    Column("target_title", ForeignKey("entities.title")),
+entity_refs_table = Table(
+    "entity_refs", mapping_registry.metadata,
+    Column("entity_id", Integer, ForeignKey("entities.id"), primary_key=True),
+    Column("ref_id", Integer, ForeignKey("entities.id"), primary_key=True),
 )
 
 def map_entities_table():
     mapping_registry.map_imperatively(
-        Entity, entities,
-        polymorphic_on=entities.c.type,
+        Entity,
+        entities_table,
+        polymorphic_on=entities_table.c.type,
         polymorphic_identity="entity",
         properties={
             "refs": relationship(
                 "Entity",
-                secondary=links,
-                primaryjoin=entities.c.title == links.c.source_title,
-                secondaryjoin=entities.c.title == links.c.target_title,
-                backref="backrefs"
-            )
+                secondary=entity_refs_table,
+                primaryjoin=entities_table.c.id == entity_refs_table.c.entity_id,
+                secondaryjoin=entities_table.c.id == entity_refs_table.c.ref_id,
+                lazy="joined",
+            ),
+            "parent": relationship("Entity", remote_side=entities_table.c.id)
         }
     )

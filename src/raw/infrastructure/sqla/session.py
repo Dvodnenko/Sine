@@ -5,13 +5,5 @@ from ...config import load_config
 
 
 conf = load_config()
-engine = create_engine(conf.core.data_file, echo=True)
-SessionLocal = sessionmaker(bind=engine)
-
-
-def get_sql_session():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+engine = create_engine(conf.core.data_file, echo=False)
+Session = sessionmaker(bind=engine)
