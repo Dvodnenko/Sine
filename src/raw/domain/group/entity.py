@@ -5,4 +5,4 @@ from ..base.entity import Entity
 
 @dataclass(kw_only=True, eq=False)
 class Group(Entity):
-    children: list[Entity]
+    children: list[Entity] = None

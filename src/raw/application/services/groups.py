@@ -1,7 +1,8 @@
 from pathlib import Path
 
-from ...domain import Group, EntityRepository, Config, UseCaseResponse
-
+from ...domain import (
+    Group, EntityRepository, Config, UseCaseResponse
+)
 
 class GroupService:
     def __init__(
@@ -33,5 +34,9 @@ class GroupService:
         group = self.repository.get(title)
         if not group:
             return UseCaseResponse(f"Group not found: {title}", status_code=4)
-        self.repository.delete(title)
+        if group.children:
+            if force:
+                self.repository.delete(group)
+            else:
+                return UseCaseResponse(f"Cannot delete Group '{title}' because it is not empty")
         return UseCaseResponse(f"Group deleted: {title}")

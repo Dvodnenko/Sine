@@ -21,3 +21,7 @@ class Entity:
     @property
     def parentstr(self) -> str:
         return self.title[0:self.title.rfind("/")]
+
+    @property
+    def name(self) -> str:
+        return self.title[self.title.rfind("/")+1 :]
