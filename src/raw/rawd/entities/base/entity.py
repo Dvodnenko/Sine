@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
 from .enums import Color
 
@@ -7,13 +6,16 @@ from .enums import Color
 @dataclass(eq=False)
 class Entity:
 
-    title: str # "a/b/c", not just "c"
-    refs: list["Entity"]
-    parent_id: Optional[int] = None
-    parent: Optional["Entity"] = None
-    children: list["Entity"] = None
-    color: Color = field(default=Color.WHITE, kw_only=True)
-    icon: str | None = field(default=None, kw_only=True)
+    title: str # /a/b/b, not just c
+    color: Color = Color.WHITE
+    icon: str = ""
+
+    refs: list["Entity"] = field(
+        default_factory=lambda: [])
+    parent_id: int = None
+    parent: "Entity" = None
+    children: list["Entity"] = field(
+        default_factory=lambda: [])
 
     def __post_init__(self):
         if not self.title.startswith("/"):
