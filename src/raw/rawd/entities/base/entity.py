@@ -22,10 +22,11 @@ class Entity:
             self.title = f"/{self.title}"
 
     def update(self, **kwargs):
+        new = self
         for key, value in kwargs.items():
-            self.__setattr__(key, value)
-        self.__post_init__()
-        return self
+            new.__setattr__(key, value)
+        new.__post_init__()
+        return new
 
     @property
     def parentstr(self) -> str:
