@@ -1,6 +1,6 @@
-from sqlalchemy import Table, Column, Integer, ForeignKey, String, Enum
+from sqlalchemy import Table, Column, Integer, ForeignKey
 
-from ...entities import Folder, Entity, Color
+from ...entities import Folder, Entity
 from ..orm_registry import mapping_registry
 
 
@@ -9,11 +9,6 @@ folders_table = Table(
     mapping_registry.metadata,
     Column("id", Integer, ForeignKey("entities.id"), 
            primary_key=True, autoincrement=True),
-    Column("color", 
-           Enum(Color, name="color_enum", create_type=True),
-           nullable=False, default=Color.WHITE
-    ),
-    Column("icon", String, nullable=False, default="")
 )
 
 

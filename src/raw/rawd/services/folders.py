@@ -37,4 +37,4 @@ class FolderService:
             self.repository.delete(folder)
             return f"Folder deleted: {args[0]}", 0
         else:
-            return (f"Cannot delete Folder '{args[0]}' because it is not empty"), 1
+            return (f"cannot delete Folder '{args[0]}' because it is not empty"), 1
