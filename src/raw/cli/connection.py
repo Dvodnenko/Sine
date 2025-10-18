@@ -18,6 +18,12 @@ def request(args: list, kwargs: dict, flags: list) -> dict:
     }
     
     client.sendall(json.dumps(requestobj).encode())
-    response: dict = json.loads(client.recv(1024).decode())
+    response = client.recv(1024).decode()
+    if not response:
+        return {
+            "message": "Daemon did not respond. This may be caused by a critical error", 
+            "status_code": 1
+        }
+    response: dict = json.loads(response)
 
     return response

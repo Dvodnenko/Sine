@@ -27,13 +27,23 @@ def handlecmd(request: str):
     kwargs = data["kwargs"]
     flags = data["flags"]
     
-    service_instance = SERVICES[args[0]]
+    service_instance: FolderService = SERVICES.get(args[0])
+    if not service_instance:
+        return format_response_json(f"Service not found: {args[0]}", 1)
+    if not hasattr(service_instance, args[1]):
+        return format_response_json(f"Method not found: {args[0]}.{args[1]}", 1)
     method = service_instance.__getattribute__(args[1])
 
-    response = method(
-        args=args[2:],
-        flags=flags,
-        **kwargs
-    )
-
-    return format_response_json(*response)
+    try:
+        response = method(
+            args=args[2:],
+            flags=flags,
+            **kwargs
+        )
+    except Exception as e:
+        if "v" in flags:
+            response = f"An error occurred: {e}", 1
+        else:
+            response = "An error occurred", 1
+    finally:
+        return format_response_json(*response)
