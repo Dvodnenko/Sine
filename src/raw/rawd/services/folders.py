@@ -17,6 +17,8 @@ class FolderService:
             query = select(Entity).where(Entity.title.in_(links_list))
             entities = self.repository.session.scalars(query).unique().all()
             kwargs["links"] = entities
+        if kwargs.get("color"):
+            kwargs["color"] = int(kwargs["color"])
         folder = Folder(**kwargs)
         if self.repository.get(folder.title):
             return f"Folder already exists: {folder.title}", 1

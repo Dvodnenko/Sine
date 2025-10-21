@@ -29,7 +29,6 @@ class SessionService:
         else:
             kwargs["start"] = datetime.now()
         session = Session(**kwargs)
-        print(f"Session: {session}")
         if session.parentstr != "":
             if not self.folders_repository.get(session.parentstr):
                 return f"Folder not found: {session.parentstr}", 1
