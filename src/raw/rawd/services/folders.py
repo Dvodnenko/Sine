@@ -4,6 +4,7 @@ from ..repositories.folder import saFolderRepository
 from ..entities import Folder, Entity
 from ..database.session import Session
 from ..database.funcs import get_all_by_titles
+from ..decorators import provide_conf
 
 
 class FolderService:
@@ -28,6 +29,7 @@ class FolderService:
         self.repository.create(folder)
         return f"Folder created: {folder.title}", 0
     
+    @provide_conf
     def all(self, args: list, flags: list, **kwargs):
         sortby = kwargs.get("sortby", "title")
         folders = self.repository.get_all()
@@ -36,11 +38,18 @@ class FolderService:
             key=lambda f: getattr(f, sortby),
             reverse="r" in flags
         )
-        return "".join(f"{f.title}\n" for f in folders)[:-1], 0
+        pattern: str = kwargs["__cnf"]["formats"]["folder"]
+        if "t" in flags:
+            return "".join(f"{f.title}\n" for f in folders)[:-1], 0
+        return "".join([f"{pattern.format(
+            **f.to_dict()).rstrip()}\n" for f in folders]).rstrip(), 0
     
+    @provide_conf
     def print(self, args: list, flags: list, **kwargs):
         folders = get_all_by_titles(self.repository.session, Folder, args)
-        return "".join(f"{f.title}\n" for f in folders)[:-1], 0
+        pattern: str = kwargs["__cnf"]["formats"]["folder"]
+        return "".join([f"{pattern.format(
+            **f.to_dict()).rstrip()}\n" for f in folders]).rstrip(), 0
         
     def update(self, args: list, flags: list, **kwargs):
         links = kwargs.get("links")

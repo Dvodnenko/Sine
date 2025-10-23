@@ -7,6 +7,7 @@ from ..repositories.folder import saFolderRepository
 from ..entities import Session, Entity
 from ..database.session import Session as ormSession
 from ..database.funcs import get_all_by_titles
+from ..decorators import provide_conf
 
 
 class SessionService:
@@ -25,9 +26,9 @@ class SessionService:
             entities = self.repository.session.scalars(query).unique().all()
             kwargs["refs"] = entities
         if kwargs.get("start"):
-            kwargs["start"] = datetime.fromisoformat(kwargs.get("start"))
+            kwargs["start"] = datetime.fromisoformat(kwargs.get("start")).replace(microsecond=0)
         else:
-            kwargs["start"] = datetime.now()
+            kwargs["start"] = datetime.now().replace(microsecond=0)
         session = Session(**kwargs)
         if session.parentstr != "":
             if not self.folders_repository.get(session.parentstr):
@@ -46,9 +47,10 @@ class SessionService:
             entities = self.repository.session.scalars(query).unique().all()
             kwargs["refs"] = entities
         if kwargs.get("end"):
-            kwargs["end"] = datetime.fromisoformat(kwargs.get("end"))
+            kwargs["end"] = datetime.fromisoformat(kwargs.get("end")).replace(microsecond=0)
         else:
-            kwargs["end"] = datetime.now()
+            kwargs["end"] = datetime.now().replace(microsecond=0)
+        kwargs["end"].replace(microsecond=0)
         current_title = session.title
         self.repository.update(current_title, **kwargs)
         return "Session stoped", 0
@@ -58,6 +60,7 @@ class SessionService:
             return self.active
         return self.repository.get_active()
     
+    @provide_conf
     def all(self, args: list, flags: list, **kwargs):
         sortby = kwargs.get("sortby", "start")
         sessions = self.repository.get_all()
@@ -66,11 +69,18 @@ class SessionService:
             key=lambda f: getattr(f, sortby),
             reverse="r" in flags
         )
-        return "".join(f"{f.title}\n" for f in sessions)[:-1], 0
+        if "t" in flags:
+            return "".join(f"{s.title}\n" for s in sessions)[:-1], 0
+        pattern: str = kwargs["__cnf"]["formats"]["session"]
+        return "".join([f"{pattern.format(
+            **s.to_dict()).rstrip()}\n" for s in sessions]).rstrip(), 0
     
+    @provide_conf
     def print(self, args: list, flags: list, **kwargs):
         sessions = get_all_by_titles(self.repository.session, Session, args)
-        return "".join(f"{s.title}\n" for s in sessions)[:-1], 0
+        pattern: str = kwargs["__cnf"]["formats"]["session"]
+        return "".join([f"{pattern.format(
+            **s.to_dict()).rstrip()}\n" for s in sessions]).rstrip(), 0
         
     def update(self, args: list, flags: list, **kwargs):
         refs = kwargs.get("refs")
