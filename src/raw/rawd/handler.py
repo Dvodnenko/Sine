@@ -2,11 +2,13 @@ import json
 
 from .services.folders import FolderService
 from .services.sessions import SessionService
+from .services.tags import TagService
 
 
 SERVICES = {
     "folders": FolderService(),
     "sessions": SessionService(),
+    "tags": TagService(),
 }
 
 

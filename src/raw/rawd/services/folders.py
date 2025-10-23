@@ -43,14 +43,14 @@ class FolderService(BaseService):
         if "t" in flags:
             return "".join(f"{f.title}\n" for f in folders)[:-1], 0
         return "".join([f"{pattern.format(
-            **f.to_dict()).rstrip()}\n" for f in folders]).rstrip(), 0
+            **f.to_dict())}" for f in folders]).rstrip(), 0
     
     @provide_conf
     def print(self, args: list, flags: list, **kwargs):
         folders = get_all_by_titles(self.repository.session, Folder, args)
         pattern: str = kwargs["__cnf"]["formats"]["folder"]
         return "".join([f"{pattern.format(
-            **f.to_dict()).rstrip()}\n" for f in folders]).rstrip(), 0
+            **f.to_dict())}" for f in folders]).rstrip(), 0
         
     def update(self, args: list, flags: list, **kwargs):
         kwargs = self.cast_kwargs(**kwargs)

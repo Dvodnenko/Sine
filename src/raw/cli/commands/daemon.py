@@ -25,8 +25,8 @@ def daemon_start(ctx: click.Context):
 def daemon_stop(ctx: click.Context):
     dpid = getdpid()
     if not dpid:
-        click.echo("raw: daemon is not started")
+        click.echo("daemon is not started")
         exit(1)
     os.kill(dpid, signal.SIGTERM)
-    click.echo(f"raw: daemon stoped: {dpid}")
+    click.echo(f"daemon stoped: {dpid}")
     exit(0)

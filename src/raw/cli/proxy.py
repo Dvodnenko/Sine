@@ -11,5 +11,8 @@ class ProxyGroup(click.Group):
             return cmd_name, cmd, args
         args_, kwargs, flags = parse_cli_args(args)
         response = request(args_, kwargs, flags)
-        click.echo(response["message"])
+        if "p" in flags:
+            click.echo_via_pager(response["message"])
+        else:
+            click.echo(response["message"])
         exit(response["status_code"])
