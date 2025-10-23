@@ -1,5 +1,4 @@
-from sqlalchemy import select
-
+from .base import BaseService
 from ..repositories.folder import saFolderRepository
 from ..entities import Folder, Entity
 from ..database.session import Session
@@ -7,20 +6,22 @@ from ..database.funcs import get_all_by_titles
 from ..decorators import provide_conf
 
 
-class FolderService:
+class FolderService(BaseService):
     def __init__(self):
         self.repository = saFolderRepository(Session())
 
+    def cast_kwargs(self, **kwargs):
+        _tcm = {
+            "color": lambda x: int(x),
+            "links": lambda x: get_all_by_titles(Entity, x.split(",")),
+        }
+        keys = set(_tcm.keys()).intersection(kwargs.keys())
+        for key in keys:
+            kwargs[key] = _tcm[key](kwargs[key])
+        return kwargs
+
     def create(self, args: list, flags: list, **kwargs) -> tuple[str, int]:
-        links = kwargs.get("links")
-        if links:
-            links_list = links.split(",")
-            query = select(Entity).where(Entity.title.in_(links_list))
-            entities = self.repository.session.scalars(query).unique().all()
-            kwargs["links"] = entities
-        if kwargs.get("color"):
-            kwargs["color"] = int(kwargs["color"])
-        folder = Folder(**kwargs)
+        folder = Folder(**self.cast_kwargs(**kwargs))
         if self.repository.get(folder.title):
             return f"Folder already exists: {folder.title}", 1
         if folder.parentstr != "":
@@ -52,17 +53,7 @@ class FolderService:
             **f.to_dict()).rstrip()}\n" for f in folders]).rstrip(), 0
         
     def update(self, args: list, flags: list, **kwargs):
-        links = kwargs.get("links")
-        if "links" in kwargs.keys():
-            if links is "":
-                kwargs["links"] = []
-            else:
-                links_list = links.split(",")
-                query = select(Entity).where(Entity.title.in_(links_list))
-                entities = self.repository.session.scalars(query).unique().all()
-                kwargs["links"] = entities
-        if kwargs.get("color"):
-            kwargs["color"] = int(kwargs["color"])
+        kwargs = self.cast_kwargs(**kwargs)
         current = self.repository.get(args[0])
         if not current:
             return f"Folder not found: {args[0]}", 1
