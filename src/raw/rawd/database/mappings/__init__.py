@@ -20,7 +20,7 @@ def map_entities_table():
                 secondary=entity_links_table,
                 primaryjoin=entities_table.c.id == entity_links_table.c.entity_id,
                 secondaryjoin=entities_table.c.id == entity_links_table.c.link_id,
-                lazy="joined",
+                lazy="joined", passive_deletes=True
             ),
             "parent": relationship(
                 "Folder", back_populates="children",

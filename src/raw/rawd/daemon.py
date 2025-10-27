@@ -10,7 +10,7 @@ import setproctitle
 
 from .handler import handlecmd
 from .database.orm_registry import mapping_registry
-from .database.session import engine
+from .database.session import engine, init_db
 from .database.mappings import map_tables
 
 
@@ -35,8 +35,7 @@ def run():
 
     atexit.register(cleanup)
 
-    mapping_registry.metadata.create_all(bind=engine)
-    map_tables()
+    init_db()
 
     try:
         while True:
