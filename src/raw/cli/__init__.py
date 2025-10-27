@@ -1,3 +1,4 @@
+import sys
 import json
 
 import click
@@ -9,11 +10,16 @@ from .proxy import ProxyGroup
 
 
 __version__ = "1.3.4"
+ALLOWED_PLATFORMS = ("darwin", "linux")
 
 @click.group(cls=ProxyGroup)
 @click.version_option(package_name="raw")
 @click.pass_context
 def raw(ctx: click.Context):
+
+    if not sys.platform.lower() in ALLOWED_PLATFORMS:
+        click.echo(f"Unsupported operating system. This tool runs on macOS and Linux only.")
+        exit(1)
     config = load_config()
 
     ctx.obj = config
