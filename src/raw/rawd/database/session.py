@@ -21,17 +21,3 @@ def init_db():
 
     with engine.connect() as conn:
         conn.execute(text("PRAGMA foreign_keys = ON;"))
-
-
-def transaction(func):
-
-    def wrapper(self, *args, **kwargs):
-        try:
-            result = func(self, *args, **kwargs)
-            self.session.commit()
-            return result
-        except Exception:
-            self.session.rollback()
-            raise
-
-    return wrapper
