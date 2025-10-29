@@ -1,4 +1,5 @@
 import json
+from typing import Generator, Any
 
 from .services.folders import FolderService
 from .services.sessions import SessionService
@@ -29,7 +30,7 @@ def format_response_json(
     return json.dumps({
         "message": message,
         "status_code": status_code
-    })
+    }) + "\n"
 
 
 def handlecmd(request: str):
@@ -43,22 +44,25 @@ def handlecmd(request: str):
     repository_instance = REPOSITORIES.get(args[0])(orm_session)
     service_instance = SERVICES.get(args[0])(repository_instance)
     if not service_instance:
-        return format_response_json(f"Service not found: {args[0]}", 1)
+        yield format_response_json(f"Service not found: {args[0]}", 1)
+        return
     if not hasattr(service_instance, args[1]):
-        return format_response_json(f"Method not found: {args[0]}.{args[1]}", 1)
-    method = service_instance.__getattribute__(args[1])
+        yield format_response_json(f"Method not found: {args[0]}.{args[1]}", 1)
+        return
+    method: Generator[tuple[str, int], Any, None] = getattr(service_instance, args[1])
 
     try:
-        response = method(
-            args=args[2:],
-            flags=flags,
-            **kwargs
-        )
+        for row, status_code in method(args=args[2:],flags=flags,**kwargs):
+            yield format_response_json(row, status_code)
+
     except Exception as e:
+        method.close()
+        print(e)
         if "v" in flags:
-            response = f"An error occurred: {e}", 1
+            yield format_response_json(f"An error occurred: {e}", 1)
         else:
-            response = "An error occurred", 1
+            yield format_response_json("An error occurred", 1)
     finally:
+        orm_session.expunge_all()
         orm_session.close()
-        return format_response_json(*response)
+        return

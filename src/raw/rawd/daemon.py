@@ -9,9 +9,7 @@ import atexit
 import setproctitle
 
 from .handler import handlecmd
-from .database.orm_registry import mapping_registry
-from .database.session import engine, init_db
-from .database.mappings import map_tables
+from .database.session import init_db
 
 
 SOCKET_PATH = "/tmp/raw.sock"
@@ -40,14 +38,15 @@ def run():
     try:
         while True:
             conn, _ = server.accept()
-            request = conn.recv(1024).decode()
+            request = conn.recv(4096).decode()
             if not request:
                 conn.close()
                 continue
-            
-            response = handlecmd(request)
-            conn.sendall(response.encode())
+
+            for row in handlecmd(request):
+                conn.sendall(row.encode())
             conn.close()
+
     finally:
         server.close()
         if os.path.exists(SOCKET_PATH):
