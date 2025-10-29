@@ -1,6 +1,5 @@
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.orm import Session as ormSession
-from ..database.session import transaction
 
 from ..entities import Session
 
@@ -9,38 +8,45 @@ class saSessionRepository:
     def __init__(self, session: ormSession):
         self.session = session
 
-    @transaction
-    def create(self, session: Session) -> None:
+    def create(self, session: Session):
         self.session.add(session)
-        return None
+        self.session.commit()
+        yield
 
-    def get(self, title: str) -> Session | None:
+    def get(self, title: str):
         query = select(Session) \
             .where(Session.title == title)
         obj = self.session.scalars(query).first()
-        return obj
+        yield obj
     
     def get_active(self):
         query = select(Session) \
             .where(Session.end == None)
         obj = self.session.scalars(query).first()
-        return obj
+        yield obj
 
-    def get_all(self) -> list[Session]:
-        query = select(Session)
-        sessions = self.session.scalars(query).unique().all()
-        return sessions
+    def get_all(self, order_by: str = "title"):
+        batch_size = 100
+        offset = 0
+        while True:
+            batch = self.session.query(Session).order_by(getattr(Session, order_by)).\
+                limit(batch_size).offset(offset).all()
+            if not batch:
+                break
+            for obj in batch:
+                yield obj
+            offset += batch_size
 
-    @transaction
-    def update(self, title_: str, **kwargs) -> None:
+    def update(self, title_: str, **kwargs):
         session = (self.session.query(Session)
                   .filter_by(title=title_)
                   .first())
         session = session.update(**kwargs)
         self.session.merge(instance=session)
-        return None
+        self.session.commit()
+        yield
 
-    @transaction
-    def delete(self, entity: Session) -> None:
+    def delete(self, entity: Session):
         self.session.delete(entity)
-        return None
+        self.session.commit()
+        yield
