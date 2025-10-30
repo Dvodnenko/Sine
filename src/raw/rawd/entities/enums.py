@@ -19,3 +19,9 @@ class Color(IntEnum):
     BRIGHT_MAGENTA = 95
     BRIGHT_CYAN = 96
     BRIGHT_WHITE = 97
+
+
+class TaskStatus(IntEnum):
+    INACTIVE = 0
+    ACTIVE = 1
+    DONE = 2
