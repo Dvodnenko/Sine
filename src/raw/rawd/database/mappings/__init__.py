@@ -1,11 +1,12 @@
 from sqlalchemy.orm import relationship
 
 from ..orm_registry import mapping_registry
-from ...entities import Entity, Folder, Session, Tag
+from ...entities import Entity, Folder, Session, Tag, Task
 from .entity import entities_table, entity_links_table
 from .folder import folders_table
 from .session import sessions_table
 from .tag import tags_table
+from .task import tasks_table
 
 
 def map_entities_table():
@@ -57,9 +58,16 @@ def map_tags_table():
         polymorphic_identity="tag",
     )
 
+def map_tasks_table():
+    mapping_registry.map_imperatively(
+        Task, tasks_table, inherits=Entity, 
+        polymorphic_identity="task",
+    )
+
 
 def map_tables():
     map_entities_table()
     map_folders_table()
     map_sessions_table()
     map_tags_table()
+    map_tasks_table()
