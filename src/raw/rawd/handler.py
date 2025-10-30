@@ -4,9 +4,11 @@ from typing import Generator, Any
 from .services.folders import FolderService
 from .services.sessions import SessionService
 from .services.tags import TagService
+from .services.tasks import TaskService
 from .repositories.folder import saFolderRepository
 from .repositories.session import saSessionRepository
 from .repositories.tag import saTagRepository
+from .repositories.task import saTaskRepository
 from .database.session import Session
 
 
@@ -14,12 +16,14 @@ SERVICES = {
     "folders": FolderService,
     "sessions": SessionService,
     "tags": TagService,
+    "tasks": TaskService,
 }
 
 REPOSITORIES = {
     "folders": saFolderRepository,
     "sessions": saSessionRepository,
     "tags": saTagRepository,
+    "tasks": saTaskRepository,
 }
 
 

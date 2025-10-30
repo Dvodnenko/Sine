@@ -1,7 +1,7 @@
 from datetime import datetime
 from dataclasses import fields
 
-from ..entities import Entity, Color
+from ..entities import Entity, Color, TaskStatus
 from ..repositories.folder import saFolderRepository
 from ..database.funcs import get_all_by_titles
 from ...config import load_config
@@ -23,6 +23,9 @@ def cast_kwargs(
             if kwargs.get("color"):
                 kwargs["color"] = Color(
                     int(kwargs["color"]))
+            if kwargs.get("status"):
+                kwargs["status"] = TaskStatus(
+                    int(kwargs["status"]))
             if kwargs.get("links"):
                 if kwargs["links"] == "":
                     kwargs["links"] = []

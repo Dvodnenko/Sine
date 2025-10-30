@@ -10,6 +10,7 @@ DEFAULT_CONFIG = {
     "formats": {
         "folder": "* \u001b[{color}m{title}\u001b[0m\n",
         "tag": "* \u001b[{color}m{title}\u001b[0m\n",
+        "task": "* \u001b[{color}m{title}\u001b[0m [{status}] {description}\n",
 
         "session": "{title}\n{sw}, {sm} {sd} {sy} {sH}:{sM}:{sS} - {eH}:{eM}:{eS} \u001b[42m {total} \u001b[0m\n\t{links}\n\n\t{description}\n\t{summary}",
     }
