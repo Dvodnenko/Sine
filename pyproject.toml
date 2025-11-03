@@ -12,7 +12,7 @@ packages = [
 ]
 
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "sqlalchemy (>=2.0.43,<3.0.0)",
     "python-daemon (>=3.1.2,<4.0.0)",
