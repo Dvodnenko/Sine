@@ -1,9 +1,6 @@
-import daemon
+import signal
 import socket
 import os
-import sys
-import signal
-from daemon import pidfile
 import atexit
 
 import setproctitle
@@ -14,6 +11,7 @@ from .database.session import init_db
 
 SOCKET_PATH = "/tmp/raw.sock"
 PID_PATH = "/tmp/raw.pid"
+running: bool = True
 
 
 def cleanup():
@@ -21,6 +19,11 @@ def cleanup():
         os.remove(SOCKET_PATH)
     if os.path.exists(PID_PATH):
         os.remove(PID_PATH)
+
+def handle_sigterm(signum, frame):
+    global running
+    running = False
+    print("SIGTERM received, shutting down...")
 
 
 def run():
@@ -31,12 +34,16 @@ def run():
     server.bind(SOCKET_PATH)
     server.listen(1)
 
+    signal.signal(signal.SIGTERM, handle_sigterm)
+    signal.signal(signal.SIGHUP, handle_sigterm)
+
+    setproctitle.setproctitle("raw")
     atexit.register(cleanup)
 
     init_db()
 
     try:
-        while True:
+        while running:
             conn, _ = server.accept()
             request = conn.recv(4096).decode()
             if not request:
@@ -53,26 +60,5 @@ def run():
             os.remove(SOCKET_PATH)
 
 
-def main():
-    context = daemon.DaemonContext(
-        working_directory="/tmp",
-        umask=0o002,
-        pidfile=pidfile.TimeoutPIDLockFile(PID_PATH),
-        stdout=open("/tmp/raw.out", "w+"),
-        stderr=open("/tmp/raw.err", "w+"),
-        detach_process=True,
-    )
-
-    setproctitle.setproctitle("raw")
-
-    context.signal_map = {
-        signal.SIGTERM: lambda signum, frame: sys.exit(0),
-        signal.SIGINT: lambda signum, frame: sys.exit(0)
-    }
-
-    with context:
-        run()
-
-
 if __name__ == "__main__":
-    main()
+    run()
