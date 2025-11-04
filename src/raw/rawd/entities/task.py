@@ -24,5 +24,5 @@ class Task(Entity):
 
             # Task's itself
             "deadline": self.deadline,
-            "status": self.status
+            "status": self.status.name,
         }
