@@ -7,8 +7,8 @@ from .enums import Color
 
 def generate_title():
     return blake2b(
-        digest_size=20,
-        data=bytes(datetime.now().isoformat(), encoding="utf-8")
+        bytes(datetime.now().isoformat(), encoding="utf-8"),
+        digest_size=10,
     ).hexdigest()
 
 
