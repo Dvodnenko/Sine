@@ -15,6 +15,7 @@ def generate_title():
 @dataclass(eq=False)
 class Entity:
 
+    id: int = None
     title: str = field(default_factory=generate_title) # /a/b/c, not just c
     color: Color = Color.WHITE
     icon: str = ""
@@ -37,6 +38,7 @@ class Entity:
     
     def to_dict(self):
         return {
+            "id": self.id,
             "title": self.title,
             "color": self.color,
             "icon": self.icon,

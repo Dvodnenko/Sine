@@ -10,11 +10,11 @@ DEFAULT_CONFIG = {
     "data_file_path": f"sqlite:///{Path.home()}/.raw.sqlite",
 
     "formats": {
-        "folder": "* \u001b[{color}m{title}\u001b[0m\n",
-        "tag": "* \u001b[{color}m{title}\u001b[0m\n",
-        "task": "* \u001b[{color}m{title}\u001b[0m [{status}] {description}\n",
+        "folder": "* #{id} \u001b[{color}m{title}\u001b[0m",
+        "tag": "* #{id} \u001b[{color}m{title}\u001b[0m",
+        "task": "* #{id} \u001b[{color}m{title}\u001b[0m [{status}] {description}",
 
-        "session": "{title}\n{sw}, {sm} {sd} {sy} {sH}:{sM}:{sS} - {eH}:{eM}:{eS} \u001b[42m {total} \u001b[0m\n\t{links}\n\n\t{description}\n\t{summary}",
+        "session": "#{id} {title}\n{sw}, {sm} {sd} {sy} {sH}:{sM}:{sS} - {eH}:{eM}:{eS} \u001b[42m {total} \u001b[0m\n\t{links}\n\n\t{description}\n\t{summary}",
     }
 }
 
@@ -34,5 +34,5 @@ def generate_plist(script_path: Path | str):
             "Crashed": True,
         },
         "StandardOutPath": "/tmp/raw.out.log",
-        "StandardErrorPath": "/tmp/raw.out.log",
+        "StandardErrorPath": "/tmp/raw.err.log",
     }
