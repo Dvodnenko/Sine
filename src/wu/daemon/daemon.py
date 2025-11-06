@@ -9,8 +9,8 @@ from .handler import handlecmd
 from .database.session import init_db
 
 
-SOCKET_PATH = "/tmp/raw.sock"
-PID_PATH = "/tmp/raw.pid"
+SOCKET_PATH = "/tmp/wu.sock"
+PID_PATH = "/tmp/wu.pid"
 running: bool = True
 
 
@@ -37,7 +37,7 @@ def run():
     signal.signal(signal.SIGTERM, handle_sigterm)
     signal.signal(signal.SIGHUP, handle_sigterm)
 
-    setproctitle.setproctitle("raw")
+    setproctitle.setproctitle("wu")
     atexit.register(cleanup)
 
     init_db()

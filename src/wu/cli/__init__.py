@@ -19,7 +19,7 @@ def execute(callback, args, kwargs, flags):
 
 
 @parse_cli_args
-def raw(args, kwargs, flags):
+def wu(args, kwargs, flags):
 
     try:
         if not args:
