@@ -1,3 +1,3 @@
-# wu 🦇
+# Raw 🦇
 
 Adjustable & Flexible LifeOS

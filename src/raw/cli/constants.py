@@ -3,11 +3,11 @@ from pathlib import Path
 
 ## Common data
 
-DAEMON_PID_PATH = Path("/tmp/wu.pid")
-CONFIG_PATH = Path.home() / ".config" / "wu" / "config.json"
+DAEMON_PID_PATH = Path("/tmp/raw.pid")
+CONFIG_PATH = Path.home() / ".config" / "raw" / "config.json"
 SUPPORTED_SYSTEMS = ("darwin", "linux")
 DEFAULT_CONFIG = {
-    "data_file_path": f"{Path.home()}/.wu.sqlite",
+    "data_file_path": f"sqlite:///{Path.home()}/.raw.sqlite",
 
     "formats": {
         "folder": "* #{id} \u001b[{color}m{title}\u001b[0m",
@@ -20,7 +20,7 @@ DEFAULT_CONFIG = {
 
 ## Plist file data (for macOS)
 
-PLIST_LABEL = "com.dvodnenko.wu"
+PLIST_LABEL = "com.dvodnenko.rawd"
 PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
 
 def generate_plist(script_path: Path | str):
@@ -32,27 +32,27 @@ def generate_plist(script_path: Path | str):
             "SuccessfulExit": False,
             "Crashed": True,
         },
-        "StandardOutPath": "/tmp/wu.out.log",
-        "StandardErrorPath": "/tmp/wu.err.log",
+        "StandardOutPath": "/tmp/raw.out.log",
+        "StandardErrorPath": "/tmp/raw.err.log",
     }
 
 
 ## Service file data (for Linux)
 
-SERVICE_PATH = Path("/etc") / "systemd" / "system" / "wu.service"
+SERVICE_PATH = Path("/etc") / "systemd" / "system" / "raw.service"
 
 def generate_service(script_path: Path | str):
     return f"""
 [Unit]
-Description=Wu Daemon Service
+Description=Raw Daemon Service
 After=network.target
 
 [Service]
 ExecStart={script_path}
 Restart=on-failure
 RestartSec=3
-StandardOutput=append:/tmp/wu.out.log
-StandardError=append:/tmp/wu.err.log
+StandardOutput=append:/tmp/raw.out.log
+StandardError=append:/tmp/raw.err.log
 
 SuccessExitStatus=0
 RestartPreventExitStatus=0

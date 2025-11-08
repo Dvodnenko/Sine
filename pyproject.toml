@@ -1,5 +1,5 @@
 [project]
-name = "wu"
+name = "raw"
 version = "1.3.4"
 description = "Adjustable & Flexible LifeOS"
 
@@ -8,7 +8,7 @@ authors = [
 ]
 
 packages = [
-    { include = "wu", from = "src" }
+    { include = "raw", from = "src" }
 ]
 
 readme = "README.md"
@@ -26,5 +26,5 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-wu = "wu.cli:wu"
-wudaemon = "wu.daemon.daemon:run"
+raw = "raw.cli:raw"
+rawd = "raw.rawd.daemon:run"
