@@ -1,6 +1,6 @@
 import json
-from typing import Generator, Any
 
+from .services.base import Service
 from .services.folders import FolderService
 from .services.sessions import SessionService
 from .services.tags import TagService
@@ -38,25 +38,19 @@ def format_response_json(
 
 
 def handlecmd(request: str):
-    data: dict = json.loads(request)
-
-    args = data["args"]
-    kwargs = data["kwargs"]
-    flags = data["flags"]
+    argv: list = json.loads(request)
 
     orm_session = Session()
-    repository_instance = REPOSITORIES.get(args[0])(orm_session)
-    service_instance = SERVICES.get(args[0])(repository_instance)
+    repository_instance = REPOSITORIES.get(argv[0])(orm_session)
+    service_instance: Service = SERVICES.get(argv[0])(repository_instance)
     if not service_instance:
-        yield format_response_json(f"Service not found: {args[0]}", 1)
+        yield format_response_json(f"Service not found: {argv[0]}", 1)
         return
-    if not hasattr(service_instance, args[1]):
-        yield format_response_json(f"Method not found: {args[0]}.{args[1]}", 1)
-        return
-    method: Generator[tuple[str, int], Any, None] = getattr(service_instance, args[1])
+    
+    method = service_instance.execute(argv[1:])
 
     try:
-        for row, status_code in method(args=args[2:],flags=flags,**kwargs):
+        for row, status_code in method:
             yield format_response_json(row, status_code)
 
     except Exception as e:
