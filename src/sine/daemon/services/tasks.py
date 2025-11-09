@@ -2,13 +2,30 @@ from ..repositories.task import saTaskRepository
 from ..repositories.folder import saFolderRepository
 from ..entities import Task
 from ..database.funcs import get_all_by_titles
-from .decorators import provide_conf, cast_kwargs
+from .decorators import cast_kwargs
+from .base import Service
+from ...common import load_config, parse_afk
 
 
-class TaskService:
+PARSER = parse_afk
+class TaskService(Service):
     def __init__(self, repository: saTaskRepository):
         self.repository = repository
         self.folders_repository = saFolderRepository(repository.session)
+
+    def execute(self, argv):
+        if not hasattr(self, argv[0]):
+            yield f"Command not found: {argv}", 1
+            return
+        try:
+            if len(argv) > 1:
+                args, flags, kwargs = PARSER(argv[1:])
+            else:
+                args, flags, kwargs = PARSER([])
+            gen = getattr(self, argv[0])(args=args, flags=flags, **kwargs)
+            yield from gen
+        except Exception as e:
+            yield e.args, 1
 
     @cast_kwargs(Task)
     def create(self, args: list, flags: list, **kwargs):
@@ -19,20 +36,18 @@ class TaskService:
         next(self.repository.create(task))
         yield f"Task created: {task.title}", 0
     
-    @provide_conf
     def all(self, args: list, flags: list, **kwargs):
         sortby = kwargs.get("sortby", "title")
         if "t" in flags:
             for task in self.repository.get_all(sortby):
                 yield task.title, 0
         else:
-            pattern: str = kwargs["__cnf"]["formats"]["task"]
+            pattern: str = load_config()["formats"]["task"]
             for task in self.repository.get_all(sortby):
                 yield pattern.format(**task.to_dict()), 0
     
-    @provide_conf
     def print(self, args: list, flags: list, **kwargs):
-        pattern: str = kwargs["__cnf"]["formats"]["task"]
+        pattern: str = load_config()["formats"]["task"]
         for task in get_all_by_titles(self.repository.session, Task, args):
             yield pattern.format(**task.to_dict()), 0
     
