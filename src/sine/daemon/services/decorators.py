@@ -3,7 +3,6 @@ from dataclasses import fields
 from ..entities import Entity, Color, TaskStatus
 from ..repositories.folder import saFolderRepository
 from ..database.funcs import get_all_by_titles
-from ...common.config import load_config
 
 
 def cast_kwargs(
@@ -54,14 +53,3 @@ def cast_kwargs(
             yield from func(self, args, flags, **kwargs)
         return wrap
     return decorator
-
-
-CONFIG = load_config()
-
-
-def provide_conf(func):
-
-    def wrapper(*args, **kwargs):
-        return func(*args, **kwargs, __cnf=CONFIG)
-    
-    return wrapper
