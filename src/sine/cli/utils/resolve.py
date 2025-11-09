@@ -1,5 +1,6 @@
-from .icm import INTERNAL_CMD_MAP, drill
+from .icm import INTERNAL_CMD_MAP
 from .connection import request
+from ...common import drill, ARG_RE
 
 
 def resolve_callback(args):
@@ -12,11 +13,10 @@ def resolve_callback(args):
     prepare everything for request
     """
 
-    callback = None
-
-    if args[0] in INTERNAL_CMD_MAP.keys(): # user calls internal service
-        callback = drill(INTERNAL_CMD_MAP, args)
-    else: # need to make daemon request
-        callback = request
-    
-    return callback
+    callback = drill(
+        INTERNAL_CMD_MAP,
+        args, ARG_RE, conditions=[callable]
+    )
+    if callback:
+        return callback, True
+    return request, False
