@@ -1,8 +1,11 @@
-from sqlalchemy import select
+from typing import TypeVar, Any, Generator
+
+from sqlalchemy import select as _select
+from sqlalchemy.orm import selectinload
 
 
 def get_all_by_titles(session, model, titles: list[str]):
-        query = select(model) \
+        query = _select(model) \
             .where(model.title.in_(titles))
         for obj in session.scalars(query).unique().yield_per(10):
             yield obj
@@ -44,3 +47,18 @@ def apply_filters(query, model, filters: dict):
 
     return query
 
+
+T_ = TypeVar("T", bound=Any)
+
+def select(
+    session,
+    model: type[T_],
+    filters: dict, 
+    order_by: str
+) -> Generator[T_, Any, None]:
+    query = session.query(model).options(
+        selectinload(model.links)
+    ).order_by(getattr(model, order_by))
+    query = apply_filters(query, model, filters)
+    for obj in query.yield_per(10):
+        yield obj
