@@ -1,7 +1,6 @@
 import traceback
 
 import dateparser
-from datetime import datetime
 
 
 def asexc(e: Exception):
@@ -13,8 +12,10 @@ def asexc(e: Exception):
 
 
 def cast_datetime(value: str):
-    return (dateparser.parse(value) or \
-        datetime.now()).replace(microsecond=0)
+    res = dateparser.parse(value)
+    if res:
+        return res
+    raise ValueError(f"cannot parse string '{value}'")
 
 def is_(type_: type, other: type):
     return (type_ is other) or (issubclass(type_, other))
