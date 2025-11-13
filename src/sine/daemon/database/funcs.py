@@ -1,7 +1,11 @@
 from typing import TypeVar, Any, Generator
+from dataclasses import fields
+from datetime import datetime
 
 from sqlalchemy import select as _select
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, Session
+
+from ..funcs import cast_datetime
 
 
 def get_all_by_titles(session, model, titles: list[str]):
@@ -26,10 +30,12 @@ OPERATORS = {
 def apply_filters(query, model, filters: dict):
     simple_kwargs = {}
     complex_expressions = []
+    allowed = {f.name: f for f in fields(model)}
 
     for key, value in filters.items():
         if "__" in key:
             field, op = key.split("__", 1)
+            if allowed[field].type is datetime: cast_datetime(value)
             if not hasattr(model, field):
                 continue
             column = getattr(model, field)
@@ -51,7 +57,7 @@ def apply_filters(query, model, filters: dict):
 T_ = TypeVar("T", bound=Any)
 
 def select(
-    session,
+    session: Session,
     model: type[T_],
     filters: dict, 
     order_by: str
