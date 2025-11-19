@@ -28,7 +28,7 @@ def cast_kwargs(
                 if is_(field.type, datetime):
                     kwargs[field.name] = cast_datetime(kwargs[field.name])
                 elif is_(field.type, IntEnum):
-                    field.type(int(kwargs[field.name]))
+                    kwargs[field.name] = field.type(int(kwargs[field.name]))
 
             if kwargs.get("links") is not None:
                 if kwargs["links"] == "":
