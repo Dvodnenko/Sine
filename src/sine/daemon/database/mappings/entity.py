@@ -1,7 +1,6 @@
-from sqlalchemy import (Table, Column, Integer, Text, Enum,
+from sqlalchemy import (Table, Column, Integer, Text,
                         String, ForeignKey, UniqueConstraint)
 
-from ...entities import Color
 from ..orm_registry import mapping_registry
 
 
@@ -13,10 +12,7 @@ entities_table = Table(
            ForeignKey("folders.id", ondelete="CASCADE"), nullable=True),
     Column("title", String, nullable=False),
     Column("description", Text, nullable=True),
-    Column("color", 
-           Enum(Color, name="color_enum", create_type=True),
-           nullable=False, default=Color.WHITE
-    ),
+    Column("styles", String),
     Column("icon", String, nullable=False, default=""),
     UniqueConstraint("title", "type", name="uq_entities_title_type"),
 )

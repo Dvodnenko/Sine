@@ -2,8 +2,6 @@ from dataclasses import dataclass, field
 from hashlib import blake2b
 from datetime import datetime
 
-from .enums import Color
-
 
 def generate_title():
     return blake2b(
@@ -17,7 +15,7 @@ class Entity:
 
     id: int = None
     title: str = field(default_factory=generate_title) # /a/b/c, not just c
-    color: Color = Color.WHITE
+    styles: str = ""
     icon: str = ""
     description: str = ""
 
@@ -40,7 +38,7 @@ class Entity:
         return {
             "id": self.id,
             "title": self.title,
-            "color": self.color,
+            "styles": self.styles,
             "icon": self.icon,
             "description": self.description,
             "links": self.links,
