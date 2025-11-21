@@ -5,10 +5,12 @@ from .services.folders import FolderService
 from .services.sessions import SessionService
 from .services.tags import TagService
 from .services.tasks import TaskService
+from .services.notes import NoteService
 from .repositories.folder import saFolderRepository
 from .repositories.session import saSessionRepository
 from .repositories.tag import saTagRepository
 from .repositories.task import saTaskRepository
+from .repositories.note import saNoteRepository
 from .database.session import Session
 from .funcs import asexc
 from ..common import parse_afk
@@ -19,6 +21,7 @@ SERVICES = {
     "sessions": SessionService,
     "tags": TagService,
     "tasks": TaskService,
+    "notes": NoteService,
 }
 
 REPOSITORIES = {
@@ -26,6 +29,7 @@ REPOSITORIES = {
     "sessions": saSessionRepository,
     "tags": saTagRepository,
     "tasks": saTaskRepository,
+    "notes": saNoteRepository,
 }
 
 
