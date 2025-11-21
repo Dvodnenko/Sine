@@ -10,38 +10,6 @@ class Session(Entity):
     summary: str = ""
     end: datetime | None = field(default=None, kw_only=True)
 
-    def to_dict(self):
-        return {
-            ## From Entity
-            **super().to_dict(),
-
-            ## Sessions's Itself
-            "start": self.start,
-            "summary": self.summary,
-            "end": self.end,
-
-            ## Properties
-            "is_active": self.is_active,
-            "total": self.total,
-
-            ## Start & End Time
-            "sw": self.start.strftime("%a"), # Saturday
-            "sd": self.start.strftime("%d"), # 1
-            "sm": self.start.strftime("%b"), # February
-            "sy": self.start.strftime("%Y"), # 2025
-            "sH": self.start.strftime("%H"), # 18
-            "sM": self.start.strftime("%M"), # 38
-            "sS": self.start.strftime("%S"), # 00
-
-            "ew": self.end.strftime("%a"), # Friday
-            "ed": self.end.strftime("%d"), # 31
-            "em": self.end.strftime("%b"), # October
-            "ey": self.end.strftime("%Y"), # 2025
-            "eH": self.end.strftime("%H"), # 16
-            "eM": self.end.strftime("%M"), # 11
-            "eS": self.end.strftime("%S"), # 09
-        }
-
     @property
     def is_active(self) -> bool:
         "Wether the Session is active"

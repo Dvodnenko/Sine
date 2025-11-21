@@ -33,18 +33,6 @@ class Entity:
             self.__setattr__(key, value)
         self.__post_init__()
         return self
-    
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "title": self.title,
-            "styles": self.styles,
-            "icon": self.icon,
-            "description": self.description,
-            "links": self.links,
-            "parent": self.parent,
-            "parent_id": self.parent_id,
-        }
 
     @property
     def parentstr(self) -> str:

@@ -7,12 +7,3 @@ from .entity import Entity
 class Folder(Entity):
     children: list["Entity"] = field(
         default_factory=lambda: [])
-
-    def to_dict(self):
-        return {
-            ## From Entity
-            **super().to_dict(),
-
-            # Folder's itself
-            "children": self.children
-        }

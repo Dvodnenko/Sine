@@ -10,13 +10,3 @@ class Task(Entity):
 
     deadline: datetime = None
     status: TaskStatus = TaskStatus.INACTIVE
-
-    def to_dict(self):
-        return {
-            ## From Entity
-            **super().to_dict(),
-
-            # Task's itself
-            "deadline": self.deadline or "",
-            "status": self.status.name,
-        }
