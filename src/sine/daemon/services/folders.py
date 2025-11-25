@@ -1,6 +1,6 @@
 from ..repositories.folder import saFolderRepository
 from ..entities import Folder
-from ..database.funcs import get_all_by_titles, select
+from ..database.funcs import get_all_by_titles, filter
 from .decorators import cast_kwargs
 from .base import Service
 from ...common import load_config, parse_afk, drill, CONFIG_GLOBALS
@@ -50,17 +50,17 @@ class FolderService(Service):
             for folder in self.repository.get_all(sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": folder}), 0
 
-    def select(self, args: list, flags: list, **kwargs):
+    def filter(self, args: list, flags: list, **kwargs):
         sortby = kwargs.pop("sortby", "title")
         fmt = kwargs.pop("fmt", "0")
         if "t" in flags:
-            for folder in select(self.repository.session, Folder, kwargs, sortby):
+            for folder in filter(self.repository.session, Folder, kwargs, sortby):
                 yield folder.title, 0
         else:
             config = load_config()
             pattern: str = drill(
                 config, ["output", "folders", "formats", fmt], default=DEFAULT_FMT)
-            for folder in select(self.repository.session, Folder, kwargs, sortby):
+            for folder in filter(self.repository.session, Folder, kwargs, sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": folder}), 0
     
     def print(self, args: list, flags: list, **kwargs):

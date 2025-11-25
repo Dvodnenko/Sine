@@ -1,7 +1,7 @@
 from ..repositories.tag import saTagRepository
 from ..repositories.folder import saFolderRepository
 from ..entities import Tag
-from ..database.funcs import get_all_by_titles, select
+from ..database.funcs import get_all_by_titles, filter
 from .decorators import cast_kwargs
 from .base import Service
 from ...common import load_config, parse_afk, drill, CONFIG_GLOBALS
@@ -51,17 +51,17 @@ class TagService(Service):
             for tag in self.repository.get_all(sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": tag}), 0
 
-    def select(self, args: list, flags: list, **kwargs):
+    def filter(self, args: list, flags: list, **kwargs):
         sortby = kwargs.pop("sortby", "title")
         fmt = kwargs.pop("fmt", "0")
         if "t" in flags:
-            for tag in select(self.repository.session, Tag, kwargs, sortby):
+            for tag in filter(self.repository.session, Tag, kwargs, sortby):
                 yield tag.title, 0
         else:
             config = load_config()
             pattern: str = drill(
                 config, ["output", "tags", "formats", fmt], default=DEFAULT_FMT)
-            for tag in select(self.repository.session, Tag, kwargs, sortby):
+            for tag in filter(self.repository.session, Tag, kwargs, sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": tag}), 0
     
     def print(self, args: list, flags: list, **kwargs):

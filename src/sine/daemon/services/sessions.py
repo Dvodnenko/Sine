@@ -3,7 +3,7 @@ from datetime import datetime
 from ..repositories.session import saSessionRepository
 from ..repositories.folder import saFolderRepository
 from ..entities import Session
-from ..database.funcs import get_all_by_titles, select
+from ..database.funcs import get_all_by_titles, filter
 from .decorators import cast_kwargs
 from .base import Service
 from ...common import load_config, parse_afk, drill, CONFIG_GLOBALS
@@ -68,17 +68,17 @@ class SessionService(Service):
             for session in self.repository.get_all(sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": session}), 0
 
-    def select(self, args: list, flags: list, **kwargs):
+    def filter(self, args: list, flags: list, **kwargs):
         sortby = kwargs.pop("sortby", "title")
         fmt = kwargs.pop("fmt", "0")
         if "t" in flags:
-            for session in select(self.repository.session, Session, kwargs, sortby):
+            for session in filter(self.repository.session, Session, kwargs, sortby):
                 yield session.title, 0
         else:
             config = load_config()
             pattern: str = drill(
                 config, ["output", "sessions", "formats", fmt], default=DEFAULT_FMT)
-            for session in select(self.repository.session, Session, kwargs, sortby):
+            for session in filter(self.repository.session, Session, kwargs, sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": session}), 0
     
     def print(self, args: list, flags: list, **kwargs):

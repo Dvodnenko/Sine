@@ -1,7 +1,7 @@
 from ..repositories.note import saNoteRepository
 from ..repositories.folder import saFolderRepository
 from ..entities import Note
-from ..database.funcs import get_all_by_titles, select
+from ..database.funcs import get_all_by_titles, filter
 from .decorators import cast_kwargs
 from .base import Service
 from ...common import load_config, parse_afk, drill, CONFIG_GLOBALS
@@ -51,17 +51,17 @@ class NoteService(Service):
             for note in self.repository.get_all(sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": note}), 0
 
-    def select(self, args: list, flags: list, **kwargs):
+    def filter(self, args: list, flags: list, **kwargs):
         sortby = kwargs.pop("sortby", "title")
         fmt = kwargs.pop("fmt", "0")
         if "t" in flags:
-            for note in select(self.repository.session, Note, kwargs, sortby):
+            for note in filter(self.repository.session, Note, kwargs, sortby):
                 yield note.title, 0
         else:
             config = load_config()
             pattern: str = drill(
                 config, ["output", "notes", "formats", fmt], default=DEFAULT_FMT)
-            for note in select(self.repository.session, Note, kwargs, sortby):
+            for note in filter(self.repository.session, Note, kwargs, sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": note}), 0
     
     def print(self, args: list, flags: list, **kwargs):

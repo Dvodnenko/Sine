@@ -56,7 +56,7 @@ def apply_filters(query, model, filters: dict):
 
 T_ = TypeVar("T", bound=Any)
 
-def select(
+def filter(
     session: Session,
     model: type[T_],
     filters: dict, 
