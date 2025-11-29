@@ -16,7 +16,8 @@ def cast_kwargs(
 ):
 
     def decorator(func):
-        def wrap(self, args: list, flags: list, **kwargs):
+        def wrap(self, rspd: dict):
+            _, _, kwargs = rspd["ps"]["afk"]
             allowed = {f for f in fields(model)}.difference(exclude)
 
             for field in allowed:
@@ -57,6 +58,6 @@ def cast_kwargs(
                     kwargs["parent"] = parent
 
                 
-            yield from func(self, args, flags, **kwargs)
+            yield from func(self, rspd)
         return wrap
     return decorator
