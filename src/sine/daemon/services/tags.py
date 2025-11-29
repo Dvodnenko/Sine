@@ -15,22 +15,19 @@ class TagService(Service):
         self.repository = repository
         self.folders_repository = saFolderRepository(repository.session)
 
-    def execute(self, argv):
-        if not hasattr(self, argv[0]):
-            yield f"Command not found: {argv}", 1
+    def execute(self, rspd):
+        if not hasattr(self, rspd["source"][1]):
+            yield f"Command not found: {rspd["source"][1]}", 1
             return
         try:
-            if len(argv) > 1:
-                args, flags, kwargs = PARSER(argv[1:])
-            else:
-                args, flags, kwargs = PARSER([])
-            gen = getattr(self, argv[0])(args=args, flags=flags, **kwargs)
+            gen = getattr(self, rspd["source"][1])(rspd)
             yield from gen
         except Exception as e:
             yield asexc(e), 1
 
     @cast_kwargs(Tag)
-    def create(self, args: list, flags: list, **kwargs):
+    def create(self, rspd: dict):
+        _, _, kwargs = rspd["ps"]["afk"]
         tag = Tag(**kwargs)
         if next(self.repository.get(tag.title)):
             yield f"Tag already exists: {tag.title}", 1
@@ -38,7 +35,8 @@ class TagService(Service):
         next(self.repository.create(tag))
         yield f"Tag created: {tag.title}", 0
     
-    def all(self, args: list, flags: list, **kwargs):
+    def all(self, rspd: dict):
+        _, flags, kwargs = rspd["ps"]["afk"]
         sortby = kwargs.pop("sortby", "title")
         if "t" in flags:
             for tag in self.repository.get_all(sortby):
@@ -51,7 +49,8 @@ class TagService(Service):
             for tag in self.repository.get_all(sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": tag}), 0
 
-    def filter(self, args: list, flags: list, **kwargs):
+    def filter(self, rspd: dict):
+        _, flags, kwargs = rspd["ps"]["afk"]
         sortby = kwargs.pop("sortby", "title")
         fmt = kwargs.pop("fmt", "0")
         if "t" in flags:
@@ -64,7 +63,8 @@ class TagService(Service):
             for tag in filter(self.repository.session, Tag, kwargs, sortby):
                 yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": tag}), 0
     
-    def print(self, args: list, flags: list, **kwargs):
+    def print(self, rspd: dict):
+        args, _, kwargs = rspd["ps"]["afk"]
         config = load_config()
         fmt = kwargs.pop("fmt", "0")
         pattern: str = drill(
@@ -73,18 +73,20 @@ class TagService(Service):
             yield eval(f"f'{pattern}'", globals={**CONFIG_GLOBALS, "e": tag}), 0
     
     @cast_kwargs(Tag)
-    def update(self, args: list, flags: list, **kwargs):
-        current = next(self.repository.get(args[0]))
+    def update(self, rspd: dict):
+        args, _, kwargs = rspd["ps"]["afk"]
+        current = next(self.repository.get(args[2]))
         if not current:
-            yield f"Tag not found: {args[0]}", 1
+            yield f"Tag not found: {args[2]}", 1
             return
-        next(self.repository.update(args[0], **kwargs))
-        yield f"Tag updated: {args[0]}", 0
+        next(self.repository.update(args[2], **kwargs))
+        yield f"Tag updated: {args[2]}", 0
 
-    def delete(self, args: list, flags: list, **kwargs):
-        tag = next(self.repository.get(args[0]))
+    def delete(self, rspd: dict):
+        args, _, _ = rspd["ps"]["afk"]
+        tag = next(self.repository.get(args[2]))
         if not tag:
-            yield f"Tag not found: {args[0]}", 1
+            yield f"Tag not found: {args[2]}", 1
             return
         next(self.repository.delete(tag))
-        yield f"Tag deleted: {args[0]}", 0
+        yield f"Tag deleted: {args[2]}", 0
