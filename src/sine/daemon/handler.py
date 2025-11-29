@@ -13,7 +13,6 @@ from .repositories.task import saTaskRepository
 from .repositories.note import saNoteRepository
 from .database.session import Session
 from .funcs import asexc
-from ..common import parse_afk
 
 
 SERVICES = {
@@ -44,19 +43,19 @@ def format_response_json(
 
 
 def handlecmd(request: str):
-    argv: list = json.loads(request)
-    _, flags, _ = parse_afk(argv)
+    rspd: dict = json.loads(request)
+    _, flags, _ = rspd["ps"]["afk"]
 
     quotes = "q" in flags
 
     orm_session = Session()
-    repository_instance = REPOSITORIES.get(argv[0])(orm_session)
-    service_instance: Service = SERVICES.get(argv[0])(repository_instance)
+    repository_instance = REPOSITORIES.get(rspd["source"][0])(orm_session)
+    service_instance: Service = SERVICES.get(rspd["source"][0])(repository_instance)
     if not service_instance:
-        yield format_response_json(f"Service not found: {argv[0]}", 1)
+        yield format_response_json(f"Service not found: {rspd["source"][0]}", 1)
         return
     
-    method = service_instance.execute(argv[1:])
+    method = service_instance.execute(rspd)
 
     try:
         if quotes:
