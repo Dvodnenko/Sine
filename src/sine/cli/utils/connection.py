@@ -2,7 +2,7 @@ import socket
 import json
 
 
-def request(*argv):
+def request(rspd: dict):
     
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     
@@ -12,9 +12,7 @@ def request(*argv):
         yield "Connection error", 1
         return
     
-    # don't parse arguments, services do it by themselves
-    # using their own parsing strategy (e.g. AKF, SQL etc.)
-    client.sendall(json.dumps(argv).encode())
+    client.sendall(json.dumps(rspd).encode())
     buffer = ""
 
     while True:

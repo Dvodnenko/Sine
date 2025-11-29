@@ -4,18 +4,16 @@ import halo
 
 from .utils.resolve import resolve_callback
 from ..common.constants import SUPPORTED_SYSTEMS
-from ..common import parse_afk
+from ..common import generate_rspd
 
 
-def execute(callback, is_internal, argv):
+def execute(callback, rspd):
 
     spinner = halo.Halo(text="Loading...", spinner="dots", color="white", 
                         stream=sys.stderr)
     spinner.start()
 
-    if is_internal:
-        argv = parse_afk(argv) # all internal callbacks use AKF parsing strategy
-    for i in callback(*argv):
+    for i in callback(rspd):
         spinner.clear()
         yield i
 
@@ -23,6 +21,7 @@ def execute(callback, is_internal, argv):
 def sin():
 
     argv = sys.argv[1:]
+    rspd = generate_rspd(argv)
 
     try:
         if not argv:
@@ -32,11 +31,11 @@ def sin():
             print(f"Unsupported operating system: {sys.platform}")
             exit(1)
 
-        callback, is_internal = resolve_callback(argv)
+        callback = resolve_callback(rspd)
 
         error_ocurred: int = 0
 
-        for response in execute(callback, is_internal, argv):
+        for response in execute(callback, rspd):
             print(response[0])
             if response[1] != 0: error_ocurred = 1
 

@@ -10,7 +10,7 @@ def getdpid() -> int | None:
             return int(pidfile.read())
     return None
 
-def daemon_start(args, flags, kwargs):
+def daemon_start(rspd):
     try:
         subprocess.run(["launchctl", "start", PLIST_LABEL], check=True)
     except subprocess.CalledProcessError as e:
@@ -18,7 +18,7 @@ def daemon_start(args, flags, kwargs):
         return
     yield "Daemon started", 0
 
-def daemon_stop(args, flags, kwargs):
+def daemon_stop(rspd):
     try:
         subprocess.run(["launchctl", "stop", PLIST_LABEL], check=True)
     except subprocess.CalledProcessError as e:
@@ -26,7 +26,7 @@ def daemon_stop(args, flags, kwargs):
         return
     yield "Daemon stopped", 0
 
-def daemon_restart(args, flags, kwargs):
+def daemon_restart(rspd):
     try:
         subprocess.run(["launchctl", "kickstart", "-k", 
                         f"gui/{os.getuid()}/{PLIST_LABEL}"], check=True)
@@ -35,7 +35,7 @@ def daemon_restart(args, flags, kwargs):
         return
     yield "Daemon restarted", 0
 
-def daemon_load(args, flags, kwargs):
+def daemon_load(rspd):
     try:
         subprocess.run(["launchctl", "bootstrap", 
                         f"gui/{os.getuid()}", PLIST_PATH], check=True)
@@ -44,7 +44,7 @@ def daemon_load(args, flags, kwargs):
         return
     yield "Daemon loaded", 0
 
-def daemon_unload(args, flags, kwargs):
+def daemon_unload(rspd):
     try:
         subprocess.run(["launchctl", "bootout", 
                         f"gui/{os.getuid()}", PLIST_PATH], check=True)
@@ -53,7 +53,7 @@ def daemon_unload(args, flags, kwargs):
         return
     yield "Daemon unloaded", 0
 
-def daemon_remove(args, flags, kwargs):
+def daemon_remove(rspd):
     try:
         subprocess.run(["launchctl", "remove", PLIST_LABEL], check=True)
     except subprocess.CalledProcessError as e:

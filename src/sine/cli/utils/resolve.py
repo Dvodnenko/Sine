@@ -3,7 +3,7 @@ from .connection import request
 from ...common import drill, ARG_RE
 
 
-def resolve_callback(args):
+def resolve_callback(rspd):
     """
     Find and return the callback that actually 
     runs the logic user is asking for
@@ -15,8 +15,10 @@ def resolve_callback(args):
 
     callback = drill(
         INTERNAL_CMD_MAP,
-        args, ARG_RE, conditions=[callable]
+        rspd["source"], ARG_RE, 
+        conditions=[callable]
     )
+    
     if callback:
-        return callback, True
-    return request, False
+        return callback
+    return request

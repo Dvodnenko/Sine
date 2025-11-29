@@ -5,7 +5,8 @@ from ....common.constants import CONFIG_PATH, DEFAULT_CONFIG, generate_service, 
 from ....common import load_config
 
 
-def init(args, flags, kwargs):
+def init(rspd):
+    _, flags, _ = rspd["ps"]["afk"]
     
     ## Config
 
