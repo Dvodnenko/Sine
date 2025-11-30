@@ -1,4 +1,5 @@
 import sys
+import subprocess
 
 import halo
 
@@ -36,7 +37,7 @@ def sin():
         error_ocurred: int = 0
 
         for response in execute(callback, rspd):
-            print(response[0])
+            subprocess.run(["echo", response[0]], stdout=sys.stdout)
             if response[1] != 0: error_ocurred = 1
 
         exit(error_ocurred)
