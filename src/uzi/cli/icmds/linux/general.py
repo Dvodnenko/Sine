@@ -30,7 +30,7 @@ def init(rspd):
     # changed above, so i re-run the method
     config = load_config()
     service_content = generate_service(config.get("daemon_bin_path", 
-                                              shutil.which("cos")))
+                                              shutil.which("uzi_")))
     if not SERVICE_PATH.exists():
         SERVICE_PATH.parent.mkdir(parents=True, exist_ok=True)
         SERVICE_PATH.touch(exist_ok=True)

@@ -1,3 +1,3 @@
-# Sine 🦇
+# uzi 🔫
 
 Adjustable & Flexible LifeOS

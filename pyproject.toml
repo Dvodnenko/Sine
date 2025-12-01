@@ -1,5 +1,5 @@
 [project]
-name = "sine"
+name = "uzi"
 version = "1.3.4"
 description = "Adjustable & Flexible LifeOS"
 
@@ -8,14 +8,13 @@ authors = [
 ]
 
 packages = [
-    { include = "sine", from = "src" }
+    { include = "uzi", from = "src" }
 ]
 
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "sqlalchemy (>=2.0.43,<3.0.0)",
-    "python-daemon (>=3.1.2,<4.0.0)",
     "setproctitle (>=1.3.7,<2.0.0)",
     "halo (>=0.0.31,<0.0.32)",
     "dateparser (>=1.2.2,<2.0.0)"
@@ -27,5 +26,5 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-sin = "sine.cli:sin"
-cos = "sine.daemon.daemon:run"
+uzi = "uzi.cli:uzi"
+uzi_ = "uzi.daemon:run"

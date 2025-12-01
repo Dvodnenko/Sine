@@ -10,7 +10,7 @@ from ..common import generate_rspd, evalreq_
 
 def execute(callback, rspd):
 
-    spinner = halo.Halo(text="Loading...", spinner="dots", color="white", 
+    spinner = halo.Halo(spinner="dots", color="white", 
                         stream=sys.stderr)
     spinner.start()
 
@@ -19,7 +19,7 @@ def execute(callback, rspd):
         yield i
 
 
-def sin():
+def uzi():
 
     argv = evalreq_(sys.argv[1:])
     rspd = generate_rspd(argv)

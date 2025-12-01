@@ -31,7 +31,7 @@ def init(rspd: dict):
     # changed above, so i re-run the method
     config = load_config() 
     plist_content = generate_plist(config.get("daemon_bin_path", 
-                                              shutil.which("cos")))
+                                              shutil.which("uzi_")))
     if not PLIST_PATH.exists():
         PLIST_PATH.touch(exist_ok=True)
         with open(PLIST_PATH, "wb") as file:

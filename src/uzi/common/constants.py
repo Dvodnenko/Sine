@@ -3,18 +3,18 @@ from pathlib import Path
 
 ## Common data
 
-DAEMON_PID_PATH = Path("/tmp/sine.pid")
-CONFIG_PATH = Path.home() / ".config" / "sine" / "config.json"
+DAEMON_PID_PATH = Path("/tmp/uzi.pid")
+CONFIG_PATH = Path.home() / ".config" / "uzi" / "config.json"
 SUPPORTED_SYSTEMS = ("darwin", "linux")
 DEFAULT_CONFIG = {
     "core": {
-        "db_path": f"{Path.home()}/.sine.sqlite",
+        "db_path": f"{Path.home()}/.uzi.sqlite",
     }
 }
 
 ## Plist file data (for macOS)
 
-PLIST_LABEL = "com.dvodnenko.sine"
+PLIST_LABEL = "com.dvodnenko.uzi"
 PLIST_PATH = Path.home() / "Library" / "LaunchAgents" / f"{PLIST_LABEL}.plist"
 
 def generate_plist(script_path: Path | str):
@@ -26,27 +26,27 @@ def generate_plist(script_path: Path | str):
             "SuccessfulExit": False,
             "Crashed": True,
         },
-        "StandardOutPath": "/tmp/sine.out.log",
-        "StandardErrorPath": "/tmp/sine.err.log",
+        "StandardOutPath": "/tmp/uzi.out.log",
+        "StandardErrorPath": "/tmp/uzi.err.log",
     }
 
 
 ## Service file data (for Linux)
 
-SERVICE_PATH = Path("/etc") / "systemd" / "system" / "sine.service"
+SERVICE_PATH = Path("/etc") / "systemd" / "system" / "uzi.service"
 
 def generate_service(script_path: Path | str):
     return f"""
 [Unit]
-Description=Sine Daemon Service
+Description=uzi Daemon Service
 After=network.target
 
 [Service]
 ExecStart={script_path}
 Restart=on-failure
 RestartSec=3
-StandardOutput=append:/tmp/sine.out.log
-StandardError=append:/tmp/sine.err.log
+StandardOutput=append:/tmp/uzi.out.log
+StandardError=append:/tmp/uzi.err.log
 
 SuccessExitStatus=0
 RestartPreventExitStatus=0

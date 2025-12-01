@@ -7,7 +7,7 @@ def request(rspd: dict):
     client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     
     try:
-        client.connect("/tmp/sine.sock")
+        client.connect("/tmp/uzi.sock")
     except (FileNotFoundError, ConnectionRefusedError):
         yield "Connection error", 1
         return
