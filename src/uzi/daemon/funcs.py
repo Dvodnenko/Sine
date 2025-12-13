@@ -11,7 +11,11 @@ def asexc(e: Exception):
     return " ".join(p for p in traceback.format_exception(e, chain=True))
 
 
+NONES = ("none", "null", "0")
+
 def cast_datetime(value: str):
+    if value.lower() in NONES:
+        return None
     res = dateparser.parse(value)
     if res:
         return res.replace(microsecond=0)
