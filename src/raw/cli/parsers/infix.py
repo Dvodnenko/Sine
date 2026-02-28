@@ -78,8 +78,6 @@ class Parser:
             field = field[1:-1]
         if value == "null":
             value = None
-        elif (name := field) in ("deadline", "started_at", "ended_at"): # then value need to be parsed as a datetime
-            value = parse_datetime(value, name)
         elif value.startswith("'") and value.endswith("'"):
             value = value[1:-1]
 
